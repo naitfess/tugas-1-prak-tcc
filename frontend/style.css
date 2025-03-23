@@ -1,0 +1,14 @@
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f5f7fa;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Container utama */
+.section-1 {
+    min-height: 100vh;
+    position: relative;
+    padding: 20px;
+}
