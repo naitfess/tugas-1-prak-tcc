@@ -1,17 +1,18 @@
-feather.replace();
+const base_url = "https://backend-alung-86744849728.us-central1.run.app";
 
 $(document).ready(function () {
   function showAlert(message, type) {
     let alertHtml = `
-                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                        <strong>${message}</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                `;
+          <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+              <strong>${message}</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      `;
 
     let $alert = $(alertHtml);
     $("#alert-container").append($alert);
 
+    // Hapus alert secara otomatis setelah 3 detik
     setTimeout(function () {
       $alert.alert("close");
     }, 2000);
@@ -19,48 +20,46 @@ $(document).ready(function () {
 
   function fetchNotes() {
     $.ajax({
-      url: "http://localhost:8000/notes",
+      url: `${base_url}/notes`,
       method: "GET",
       dataType: "json",
       success: function (data) {
-        $(".notes").empty();
+        $(".notes").empty(); // Kosongkan sebelum mengisi ulang
         if (data.length === 0) {
           $(".notes").append(`
-                                <div class="position-absolute top-50 start-50 translate-middle text-center">
-                                    <h1 class="fs-3">empty notes.</h1>
-                                </div>
-                            `);
+                      <div class="position-absolute top-50 start-50 translate-middle text-center">
+                          <h1 class="fs-3">empty notes.</h1>
+                      </div>
+                  `);
         }
         data.forEach((note) => {
           let noteItem = `
-                                <div class="note-item col-12 col-lg-3 col-md-4 col-sm-6 mb-3">
-                                    <button class="show-note" type="button" data-id="${
-                                      note.id
-                                    }" data-bs-toggle="modal" data-bs-target="#ModalShow">
-                                        <div class="card text-bg-dark text-start">
-                                            <div class="card-header d-flex justify-content-between">
-                                                <div>${new Date(
-                                                  note.createdAt
-                                                ).toLocaleDateString("en-GB", {
-                                                  day: "2-digit",
-                                                  month: "long",
-                                                  year: "numeric",
-                                                })}</div>
-                                                <a href="#" class="delete-note" data-id="${
-                                                  note.id
-                                                }" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#ModalDelete">
-                                                    <i data-feather="x"></i>
-                                                </a>
-                                            </div>
-                                            <div class="card-body">
-                                                <h5 class="card-title">${
-                                                  note.title
-                                                }</h5>
-                                            </div>
-                                        </div>
-                                    </button>
-                                </div>
-                            `;
+                      <div class="note-item col-12 col-lg-3 col-md-4 col-sm-6 my-3 p-0">
+                          <button class="show-note border-0 w-100" type="button" data-id="${
+                            note.id
+                          }" data-bs-toggle="modal" data-bs-target="#ModalShow">
+                              <div class="card text-bg-dark text-start w-100">
+                                  <div class="card-header d-flex justify-content-between">
+                                      <div>${new Date(
+                                        note.createdAt
+                                      ).toLocaleDateString("en-GB", {
+                                        day: "2-digit",
+                                        month: "long",
+                                        year: "numeric",
+                                      })}</div>
+                                      <a href="#" class="delete-note" data-id="${
+                                        note.id
+                                      }" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#ModalDelete">
+                                          <i data-feather="x"></i>
+                                      </a>
+                                  </div>
+                                  <div class="card-body">
+                                      <h5 class="card-title">${note.title}</h5>
+                                  </div>
+                              </div>
+                          </button>
+                      </div>
+                  `;
           $(".notes").append(noteItem);
         });
         feather.replace();
@@ -79,7 +78,7 @@ $(document).ready(function () {
     $("#button-update").data("id", noteId);
 
     $.ajax({
-      url: `http://localhost:8000/notes/${noteId}`,
+      url: `${base_url}/notes/${noteId}`,
       method: "GET",
       dataType: "json",
       success: function (note) {
@@ -108,12 +107,12 @@ $(document).ready(function () {
     e.preventDefault();
     let noteId = $(this).data("id");
     $.ajax({
-      url: `http://localhost:8000/notes/${noteId}`,
+      url: `${base_url}/notes/${noteId}`,
       method: "DELETE",
       success: function () {
         $("#ModalDelete").modal("hide");
         showAlert("Note deleted successfully!", "success");
-        fetchNotes();
+        fetchNotes(); // Refresh daftar catatan setelah dihapus
       },
       error: function (err) {
         console.error("Error deleting note:", err);
@@ -126,7 +125,7 @@ $(document).ready(function () {
     let description = $("#ModalCreate textarea").val();
 
     $.ajax({
-      url: "http://localhost:8000/notes",
+      url: `${base_url}/notes`,
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({
@@ -138,7 +137,7 @@ $(document).ready(function () {
         $("#ModalCreate input").val("");
         $("#ModalCreate textarea").val("");
         showAlert("Note created successfully!", "success");
-        fetchNotes();
+        fetchNotes(); // Refresh daftar catatan
       },
       error: function (err) {
         console.error("Error creating note:", err);
@@ -163,7 +162,7 @@ $(document).ready(function () {
     }
 
     $.ajax({
-      url: `http://localhost:8000/notes/${noteId}`,
+      url: `${base_url}/notes/${noteId}`,
       method: "PUT",
       contentType: "application/json",
       data: JSON.stringify({
