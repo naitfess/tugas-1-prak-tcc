@@ -1,5 +1,5 @@
-// const base_url = "https://backend-alung-86744849728.us-central1.run.app";
-const base_url = "localhost:5000";
+const base_url = "https://be-843268880793.us-central1.run.app";
+// const base_url = "localhost:5000";
 
 $(document).ready(function () {
   function showAlert(message, type) {
