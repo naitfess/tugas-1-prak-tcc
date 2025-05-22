@@ -1,5 +1,5 @@
-const base_url = "https://be-843268880793.us-central1.run.app";
-// const base_url = "localhost:5000";
+// const base_url = "https://be-843268880793.us-central1.run.app";
+const base_url = "http://localhost:5000";
 
 $(document).ready(function () {
   function showAlert(message, type) {
@@ -9,10 +9,10 @@ $(document).ready(function () {
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
       `;
-
+    
     let $alert = $(alertHtml);
     $("#alert-container").append($alert);
-
+    
     // Hapus alert secara otomatis setelah 3 detik
     setTimeout(function () {
       $alert.alert("close");
@@ -20,9 +20,16 @@ $(document).ready(function () {
   }
 
   function fetchNotes() {
+    console.log("Access Token:", localStorage.getItem("accessToken"));
     $.ajax({
       url: `${base_url}/notes`,
       method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Pastikan format Bearer
+      },
+      xhrFields: {
+        withCredentials: true
+      },
       dataType: "json",
       success: function (data) {
         $(".notes").empty(); // Kosongkan sebelum mengisi ulang
@@ -32,25 +39,25 @@ $(document).ready(function () {
                           <h1 class="fs-3">empty notes.</h1>
                       </div>
                   `);
-        }
-        data.forEach((note) => {
-          let noteItem = `
+          }
+          data.forEach((note) => {
+            let noteItem = `
                       <div class="note-item col-12 col-lg-3 col-md-4 col-sm-6 my-3 p-0">
                           <button class="show-note border-0 w-100" type="button" data-id="${
-                            note.id
-                          }" data-bs-toggle="modal" data-bs-target="#ModalShow">
+            note.id
+          }" data-bs-toggle="modal" data-bs-target="#ModalShow">
                               <div class="card text-bg-dark text-start w-100">
                                   <div class="card-header d-flex justify-content-between">
                                       <div>${new Date(
-                                        note.createdAt
-                                      ).toLocaleDateString("en-GB", {
-                                        day: "2-digit",
-                                        month: "long",
-                                        year: "numeric",
-                                      })}</div>
+          note.createdAt
+        ).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        })}</div>
                                       <a href="#" class="delete-note" data-id="${
-                                        note.id
-                                      }" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#ModalDelete">
+        note.id
+      }" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#ModalDelete">
                                           <i data-feather="x"></i>
                                       </a>
                                   </div>
@@ -61,129 +68,149 @@ $(document).ready(function () {
                           </button>
                       </div>
                   `;
-          $(".notes").append(noteItem);
-        });
-        feather.replace();
-      },
-      error: function (err) {
-        console.error("Error fetching notes:", err);
-      },
+      $(".notes").append(noteItem);
     });
-  }
-  fetchNotes();
+    feather.replace();
+  },
+  error: function (err) {
+    console.error("Error fetching notes:", err);
+  },
+});
+}
+fetchNotes();
 
-  $(document).on("click", ".show-note", function () {
-    let noteId = $(this).data("id");
-    $("#ModalShow input").prop("disabled", true);
-    $("#ModalShow textarea").prop("disabled", true);
-    $("#button-update").data("id", noteId);
-
-    $.ajax({
-      url: `${base_url}/notes/${noteId}`,
-      method: "GET",
-      dataType: "json",
-      success: function (note) {
-        $("#ModalShowLabel").text(
-          new Date(note.createdAt).toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          })
-        );
-        $("#ModalShow input").val(note.title);
-        $("#ModalShow textarea").val(note.description);
-      },
-      error: function (err) {
+$(document).on("click", ".show-note", function () {
+  let noteId = $(this).data("id");
+  $("#ModalShow input").prop("disabled", true);
+  $("#ModalShow textarea").prop("disabled", true);
+  $("#button-update").data("id", noteId);
+  
+  $.ajax({
+    url: `${base_url}/notes/${noteId}`,
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Pastikan format Bearer
+    },
+    dataType: "json",
+    xhrFields: {
+      withCredentials: true, // Kirim cookie ke backend
+    },
+    success: function (note) {
+      $("#ModalShowLabel").text(
+        new Date(note.createdAt).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        })
+      );
+      $("#ModalShow input").val(note.title);
+      $("#ModalShow textarea").val(note.description);
+    },
+    error: function (err) {
+      if (err.status === 401) {
+        // Redirect ke halaman login
+        return window.location.href = "/login";
+      } else {
         console.error("Error fetching note:", err);
-      },
-    });
+      }
+    },
   });
+});
 
-  $(document).on("click", ".delete-note", function () {
-    let noteId = $(this).data("id");
-    $("#button-delete").data("id", noteId);
+$(document).on("click", ".delete-note", function () {
+  let noteId = $(this).data("id");
+  $("#button-delete").data("id", noteId);
+});
+
+$(document).on("click", "#button-delete", function (e) {
+  e.preventDefault();
+  let noteId = $(this).data("id");
+  $.ajax({
+    url: `${base_url}/notes/${noteId}`,
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Pastikan format Bearer
+    },
+    success: function () {
+      $("#ModalDelete").modal("hide");
+      showAlert("Note deleted successfully!", "success");
+      fetchNotes(); // Refresh daftar catatan setelah dihapus
+    },
+    error: function (err) {
+      console.error("Error deleting note:", err);
+    },
   });
+});
 
-  $(document).on("click", "#button-delete", function (e) {
-    e.preventDefault();
-    let noteId = $(this).data("id");
-    $.ajax({
-      url: `${base_url}/notes/${noteId}`,
-      method: "DELETE",
-      success: function () {
-        $("#ModalDelete").modal("hide");
-        showAlert("Note deleted successfully!", "success");
-        fetchNotes(); // Refresh daftar catatan setelah dihapus
-      },
-      error: function (err) {
-        console.error("Error deleting note:", err);
-      },
-    });
+$("#ModalCreate .btn-primary").click(function () {
+  let title = $("#ModalCreate input").val();
+  let description = $("#ModalCreate textarea").val();
+  
+  $.ajax({
+    url: `${base_url}/notes`,
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Pastikan format Bearer
+    },
+    contentType: "application/json",
+    data: JSON.stringify({
+      title,
+      description,
+    }),
+    success: function () {
+      $("#ModalCreate").modal("hide");
+      $("#ModalCreate input").val("");
+      $("#ModalCreate textarea").val("");
+      showAlert("Note created successfully!", "success");
+      fetchNotes(); // Refresh daftar catatan
+    },
+    error: function (err) {
+      console.error("Error creating note:", err);
+    },
   });
+});
 
-  $("#ModalCreate .btn-primary").click(function () {
-    let title = $("#ModalCreate input").val();
-    let description = $("#ModalCreate textarea").val();
+$("#button-edit").click(function () {
+  $("#ModalShow input, #ModalShow textarea").prop("disabled", false);
+  $("#button-edit").addClass("d-none");
+  $("#button-update").removeClass("d-none");
+});
 
-    $.ajax({
-      url: `${base_url}/notes`,
-      method: "POST",
-      contentType: "application/json",
-      data: JSON.stringify({
-        title,
-        description,
-      }),
-      success: function () {
-        $("#ModalCreate").modal("hide");
-        $("#ModalCreate input").val("");
-        $("#ModalCreate textarea").val("");
-        showAlert("Note created successfully!", "success");
-        fetchNotes(); // Refresh daftar catatan
-      },
-      error: function (err) {
-        console.error("Error creating note:", err);
-      },
-    });
+$("#button-update").click(function () {
+  let noteId = $(this).data("id");
+  let title = $("#ModalShow input").val().trim();
+  let description = $("#ModalShow textarea").val().trim();
+  
+  if (!title || !description) {
+    showAlert("Title and content cannot be empty!", "warning");
+    return;
+  }
+  
+  $.ajax({
+    url: `${base_url}/notes/${noteId}`,
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Pastikan format Bearer
+    },
+    contentType: "application/json",
+    data: JSON.stringify({
+      title,
+      description,
+    }),
+    success: function () {
+      $("#ModalShow").modal("hide");
+      $("#ModalShow").on("hidden.bs.modal", function () {
+        $("#ModalShow input, #ModalShow textarea").prop("disabled", true);
+        $("#button-edit").removeClass("d-none");
+        $("#button-update").addClass("d-none");
+        fetchNotes();
+      });
+      showAlert("Note updated successfully!", "success");
+    },
+    error: function (err) {
+      console.error("Error updating note:", err);
+      showAlert("Failed to update note!", "danger");
+    },
   });
-
-  $("#button-edit").click(function () {
-    $("#ModalShow input, #ModalShow textarea").prop("disabled", false);
-    $("#button-edit").addClass("d-none");
-    $("#button-update").removeClass("d-none");
-  });
-
-  $("#button-update").click(function () {
-    let noteId = $(this).data("id");
-    let title = $("#ModalShow input").val().trim();
-    let description = $("#ModalShow textarea").val().trim();
-
-    if (!title || !description) {
-      showAlert("Title and content cannot be empty!", "warning");
-      return;
-    }
-
-    $.ajax({
-      url: `${base_url}/notes/${noteId}`,
-      method: "PUT",
-      contentType: "application/json",
-      data: JSON.stringify({
-        title,
-        description,
-      }),
-      success: function () {
-        $("#ModalShow").modal("hide");
-        $("#ModalShow").on("hidden.bs.modal", function () {
-          $("#ModalShow input, #ModalShow textarea").prop("disabled", true);
-          $("#button-edit").removeClass("d-none");
-          $("#button-update").addClass("d-none");
-          fetchNotes();
-        });
-        showAlert("Note updated successfully!", "success");
-      },
-      error: function (err) {
-        console.error("Error updating note:", err);
-        showAlert("Failed to update note!", "danger");
-      },
-    });
-  });
+});
 });
