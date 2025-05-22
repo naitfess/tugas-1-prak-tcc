@@ -25,5 +25,5 @@ steps:
         "ACCESS_TOKEN=${_ACCESS_TOKEN},REFRESH_TOKEN=${_REFRESH_TOKEN},DB_HOST=${_DB_HOST},DB_NAME=${_DB_NAME},DB_PASSWORD=${_DB_PASSWORD},DB_USER=${_DB_USER)",
       ]
 
-)"tions:
+options:
   logging: CLOUD_LOGGING_ONLY
