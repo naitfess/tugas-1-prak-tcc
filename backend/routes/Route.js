@@ -7,7 +7,7 @@ import { getAccessToken } from "../controller/TokenController.js";
 
 const router = express.Router();
 
-router.get("/notes", verifyToken, NoteController.getNotes);
+router.get("/notes", NoteController.getNotes);
 router.get("/notes/:id", verifyToken, NoteController.getNoteById);
 router.post("/notes", verifyToken, NoteController.createNote);
 router.put("/notes/:id", verifyToken, NoteController.updateNote);
