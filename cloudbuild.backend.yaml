@@ -13,7 +13,7 @@ steps:
         "deploy",
         "be-trigger-alung",
         "--image",
-        "gcr.io/$PROJECT_ID/be-trigger-alung",
+        "gcr.io/$PROJECT_ID/be-alung",
         "--timeout",
         "1000s",
         "--port",
@@ -22,8 +22,8 @@ steps:
         "us-central1",
         "--allow-unauthenticated",
         "--set-env-vars",
-        "ACCESS_TOKEN=${_ACCESS_TOKEN},REFRESH_TOKEN=${_REFRESH_TOKEN},DB_HOST=${_DB_HOST},DB_NAME=${_DB_NAME},DB_PASSWORD=${_DB_PASSWORD},DB_USER=${_DB_USER)",
+        "ACCESS_TOKEN=${_ACCESS_TOKEN},REFRESH_TOKEN=${_REFRESH_TOKEN},DB_HOST=${_DB_HOST},DB_NAME=${_DB_NAME},DB_PASSWORD=${_DB_PASSWORD},DB_USER=${_DB_USER}",
       ]
 
-)"tions:
+options:
   logging: CLOUD_LOGGING_ONLY

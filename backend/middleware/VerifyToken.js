@@ -6,7 +6,7 @@ const ACCESS_TOKEN = process.env.ACCESS_TOKEN; // Tambahkan ini
 
 export const verifyToken = (req, res, next) => {
   console.log("==== HEADERS ====");
-  console.log(req.headers); // 🧠 Cek semua header yang diterima
+  console.log(req.headers); //  Cek semua header yang diterima
 
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
