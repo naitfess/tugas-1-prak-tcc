@@ -2,7 +2,7 @@ import express from "express";
 import * as NoteController from "../controller/NoteController.js";
 import * as UserController from "../controller/UserController.js";
 import * as PageController from "../controller/PageController.js";
-import { verifyToken } from "../middleware/verifyToken.js";
+import verifyToken from "../middleware/verifyToken.js";
 import { getAccessToken } from "../controller/TokenController.js";
 
 const router = express.Router();
