@@ -1,5 +1,5 @@
-// const base_url = "https://be-843268880793.us-central1.run.app";
-const base_url = "http://localhost:5000";
+const base_url = "https://be-trigger-alung-1061342868557.us-central1.run.app";
+// const base_url = "http://localhost:5000";
 
 $(document).ready(function () {
   function showAlert(message, type) {

@@ -60,7 +60,7 @@
                 <button type="submit" class="btn btn-primary">Register</button>
             </div>
             <div class="login-link">
-                <a href="http://localhost:5000/login">Already have an account? Login here</a>
+                <a href="https://be-trigger-alung-1061342868557.us-central1.run.app/login">Already have an account? Login here</a>
             </div>
         </form>
     </div>
@@ -72,7 +72,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch('http://localhost:5000/register', {
+                const response = await fetch('https://be-trigger-alung-1061342868557.us-central1.run.app/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -82,7 +82,7 @@
 
                 if (response.ok) {
                     alert('Registration successful');
-                    window.location.href = 'http://localhost:5000/login'; // Redirect on success
+                    window.location.href = 'https://be-trigger-alung-1061342868557.us-central1.run.app/login'; // Redirect on success
                 } else {
                     const errorData = await response.json();
                     alert(errorData.message || 'Registration failed');
