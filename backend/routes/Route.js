@@ -7,13 +7,14 @@ import { getAccessToken } from "../controller/TokenController.js";
 
 const router = express.Router();
 
-router.get("/notes", NoteController.getNotes);
+router.get("/notes", verifyToken, NoteController.getNotes);
 router.get("/notes/:id", verifyToken, NoteController.getNoteById);
 router.post("/notes", verifyToken, NoteController.createNote);
 router.put("/notes/:id", verifyToken, NoteController.updateNote);
 router.delete("/notes/:id", verifyToken, NoteController.deleteNote);
 
-router.get("/", PageController.index);
+router.get("/", PageController.login);
+router.get("/notes-list", PageController.index);
 router.get("/login", PageController.login);
 router.get("/register", PageController.register);
 
