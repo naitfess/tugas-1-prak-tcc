@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
 
 app.use(cookieParser());
 app.use(cors({
-  origin: "http://localhost:8080", // Allow requests from the frontend
+  origin: "https://b-01-450713.uc.r.appspot.com",
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"], // Include Authorization header
 }));

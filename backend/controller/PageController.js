@@ -1,11 +1,11 @@
 export const index = (req, res) => {
-  res.redirect("http://localhost:8080/tugas-1-prak-tcc/frontend/index.html");
+  res.redirect("https://b-01-450713.uc.r.appspot.com/index.html");
 };
 
 export const login = (req, res) => {
-  res.redirect("http://localhost:8080/tugas-1-prak-tcc/frontend/login.html");
+  res.redirect("https://b-01-450713.uc.r.appspot.com/login.html");
 };
 
 export const register = (req, res) => {
-  res.redirect("http://localhost:8080/tugas-1-prak-tcc/frontend/register.html");
+  res.redirect("https://b-01-450713.uc.r.appspot.com/register.html");
 };
