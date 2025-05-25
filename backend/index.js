@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
 
 app.use(cookieParser());
 app.use(cors({
-  origin: "https://fe-alung-t7-dot-b-01-450713.uc.r.appspot.com/",
+  origin: "https://fe-alung-t7-dot-b-01-450713.uc.r.appspot.com",
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"], // Include Authorization header
 }));
